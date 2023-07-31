@@ -1,0 +1,19 @@
+# -*- mode: zsh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
+# vim: ft=zsh sw=2 ts=2 et
+#
+# Copyright (c) 2021-present Z-Shell Community
+#
+# Set the base and typically useful options.
+
+builtin emulate -L zsh ${=${options[xtrace]:#off}:+-o xtrace}
+builtin setopt extended_glob warn_create_global typeset_silent no_short_loops rc_quotes no_auto_pushd
+
+local type=$1 id=$2 id_as=$3 args=$4 ices=$5 hook=$6 subtype=$7
+
+local hook_name
+for hook_name in ${(s/ /)Plugins[FUNCTIONAL_HOOKS_HOOKS]}; do
+    (( ! $+functions[${hook_name}] )) && continue
+    local func="${${functions[${hook_name}]//$'\n'/;}//$'\t'/}"
+    ICE[${hook_name}]="${func};${ICE[${hook_name}]}"
+    unset -f ${hook_name}
+done
